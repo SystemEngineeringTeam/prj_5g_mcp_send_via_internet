@@ -10,8 +10,8 @@ import socket
 import os
 
 ENV_PORT = os.environ.get("PORT")
-PORT = int(ENV_PORT) or 12351
-SERVER = socket.gethostbyname(socket.gethostname())
+PORT = int(ENV_PORT or 12351)
+SERVER = os.environ.get("PORT") or "127.0.0.1"
 ADDR = (SERVER, PORT)
 FORMAT = "utf-8"
 BUFSIZE = 4096
