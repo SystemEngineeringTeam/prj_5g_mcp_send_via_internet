@@ -13,7 +13,7 @@ from urllib.parse import urljoin
 
 ENV_PORT = os.environ.get("PORT")
 PORT = int(ENV_PORT or 12351)
-SERVER = os.environ.get("PORT") or "127.0.0.1"
+SERVER = os.environ.get("SERVER") or "127.0.0.1"
 API_URL = os.environ.get("API_URL")
 SEND_ID = sys.argv[1] if len(sys.argv) > 1 else None
 
