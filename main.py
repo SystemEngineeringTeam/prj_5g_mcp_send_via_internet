@@ -5,37 +5,43 @@ mocopiアプリと 1対1 で接続し、
 1対多は考慮していません
 """
 
-import datetime
-import socket
 import os
+import sys
+import socket
+import requests
+from urllib.parse import urljoin
 
 ENV_PORT = os.environ.get("PORT")
 PORT = int(ENV_PORT or 12351)
 SERVER = os.environ.get("PORT") or "127.0.0.1"
-ADDR = (SERVER, PORT)
-FORMAT = "utf-8"
-BUFSIZE = 4096
+API_URL = os.environ.get("API_URL")
+SEND_ID = sys.argv[1] if len(sys.argv) > 1 else None
+
+if not API_URL:
+    raise ValueError("API_URL is required. set to env file.")
+if not SEND_ID:
+    raise ValueError("send_id is required. (python main.py <send_id>)")
+
+
+def send2api(data):
+    res = requests.post(urljoin(API_URL, SEND_ID), data=data)
+    return res
 
 
 def main():
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind(ADDR)
-    server.listen()
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.bind((SERVER, PORT))
+        print(f"[Start] {SERVER}:{PORT}")
 
-    try:
-        while True:
-            print(f"[NEW Connection] {ADDR} connected.")
+        try:
+            while True:
+                data, address = s.recvfrom(8192)
+                print(f"[Received] {address}")
+                res = send2api(data)
+                print(f"[{res.status_code}]: {res.text}")
 
-            client, addr = server.accept()
-            msg = str(datetime.datetime.now())
-            client.sendall(msg.encode("UTF-8"))
-            data = client.recv(BUFSIZE)
-            data.decode(FORMAT)
-
-            client.close()
-
-    except KeyboardInterrupt:
-        print("Finished!")
+        except KeyboardInterrupt:
+            print("Finished!")
 
 
 if __name__ == "__main__":
