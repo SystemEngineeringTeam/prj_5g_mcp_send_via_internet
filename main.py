@@ -6,6 +6,7 @@ mocopiアプリと 1対1 で接続し、
 """
 
 import sys
+import time
 import socket
 import requests
 from urllib.parse import urljoin
@@ -31,8 +32,11 @@ def send_with_udp(data):
 
 def send2api(data):
     res = requests.post(urljoin(API_URL, SEND_ID), data=data)
+    now = str(time.time()).encode()
     print(f"[{res.status_code}]: {res.text}")
-    return res
+
+    send_data = res + ":".encode() + now
+    return send_data
 
 
 def main():
