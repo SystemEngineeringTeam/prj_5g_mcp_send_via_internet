@@ -13,9 +13,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 RECV_PORT = 12350
 SEND_PORT = 12351
-SERVER = "192.168.101.72"
 API_URL = "https://prj-5g-with-mocopi.sysken.net/api/raw/"
 SEND_ID = sys.argv[1] if len(sys.argv) > 1 else None
+SERVER = sys.argv[2] if len(sys.argv) > 2 else None
 
 if not API_URL:
     raise ValueError("API_URL is required. set to env file.")
